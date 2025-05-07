@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { User } from '@/types';
@@ -29,23 +30,26 @@ export function UserNav() {
   useEffect(() => {
     async function fetchUser() {
       setIsLoading(true); 
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-      setIsLoading(false);
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error("Error fetching user in UserNav:", error);
+        setUser(null); // Ensure user is null on error
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchUser();
   }, []);
 
   const handleLogout = async () => {
-    setIsLoading(true);
+    setIsLoading(true); // Can use a different loading state for logout if needed
     try {
       await performLogoutServerAction();
-      // If performLogoutServerAction redirects, this part of the try block might not be reached.
-      // The redirect itself is the primary indication of success.
-      // A success toast here might be preempted or cause issues if the promise behaves unexpectedly with redirects.
-      // User state (setUser(null)) should ideally be updated via re-fetching after redirect and layout revalidation.
+      // Server action handles redirect and revalidation.
+      // Client-side state update might be redundant or happen after redirect.
     } catch (error) {
-      // This will catch genuine errors from performLogoutServerAction.
       console.error("Client-side logout error:", error);
       toast({ title: "Logout Failed", description: "An error occurred during logout.", variant: "destructive" });
     } finally {
@@ -53,7 +57,7 @@ export function UserNav() {
     }
   };
 
-  if (isLoading && !user) { // Show loading skeleton only if user is not yet loaded
+  if (isLoading) {
     return (
       <div className="flex items-center space-x-2">
         <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
@@ -64,7 +68,7 @@ export function UserNav() {
   if (!user) {
     return (
       <Link href="/login">
-        <Button variant="outline" size="sm">Login</Button>
+        <Button variant="outline" size="sm" className="hidden md:inline-flex">Login</Button>
       </Link>
     );
   }
@@ -127,8 +131,8 @@ export function UserNav() {
             </DropdownMenuItem>
           </Link>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout} disabled={isLoading}>
-          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogOut className="mr-2 h-4 w-4" />}
+        <DropdownMenuItem onClick={handleLogout} disabled={isLoading}> 
+          {isLoading && user ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogOut className="mr-2 h-4 w-4" />}
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

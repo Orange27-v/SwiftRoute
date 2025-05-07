@@ -1,3 +1,4 @@
+
 // src/components/shared/Navbar.tsx
 'use client';
 
@@ -20,24 +21,31 @@ export function Navbar() {
   useEffect(() => {
     async function fetchUser() {
       setIsLoading(true);
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-      setIsLoading(false);
+      try {
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error("Error fetching user in Navbar:", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchUser();
   }, []);
 
   const commonLinks = (
     <>
-      <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+      <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground block py-2 md:inline-block md:py-0" onClick={() => setIsMobileMenuOpen(false)}>
         Features
       </Link>
-      {!user && (
+      {/* Pricing and Testimonials only shown if not logged in, or if loading (to prevent layout shift) */}
+      {(isLoading || !user) && (
         <>
-          <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground block py-2 md:inline-block md:py-0" onClick={() => setIsMobileMenuOpen(false)}>
             Pricing
           </Link>
-          <Link href="/#testimonials" className="text-muted-foreground transition-colors hover:text-foreground block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/#testimonials" className="text-muted-foreground transition-colors hover:text-foreground block py-2 md:inline-block md:py-0" onClick={() => setIsMobileMenuOpen(false)}>
             Testimonials
           </Link>
         </>
@@ -53,7 +61,9 @@ export function Navbar() {
         <nav className="flex items-center gap-2">
           {/* Desktop-only navigation links */}
           <div className="hidden md:flex items-center gap-4 text-sm lg:gap-6">
-            {isLoading ? null : user ? (
+            {isLoading ? (
+              <div className="h-5 w-24 bg-muted rounded-md animate-pulse" /> // Skeleton for Dashboard/Get Started link
+            ) : user ? (
               <Link href="/dashboard" className="text-muted-foreground transition-colors hover:text-foreground">
                 Dashboard
               </Link>
@@ -66,15 +76,8 @@ export function Navbar() {
           </div>
 
           {/* UserNav (if logged in) or Login button (if logged out, for desktop) */}
-          {isLoading ? (
-             <div className="h-8 w-20 rounded-md bg-muted animate-pulse hidden md:block" />
-          ) : user ? (
-            <UserNav /> 
-          ) : (
-            <Link href="/login" className="hidden md:inline-flex"> 
-              <Button variant="outline" size="sm">Login</Button>
-            </Link>
-          )}
+          {/* isLoading check handled within UserNav itself for its skeleton */}
+          <UserNav />
           
           {/* Mobile Navigation Menu Trigger */}
           <div className="md:hidden">
@@ -84,7 +87,7 @@ export function Navbar() {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="p-0">
+              <SheetContent side="left" className="p-0 w-full max-w-xs sm:max-w-sm"> {/* Adjusted width for mobile */}
                 <SheetHeader className="p-4 border-b">
                   <div className="flex justify-between items-center">
                     <SheetTitle><Logo /></SheetTitle>
@@ -97,7 +100,9 @@ export function Navbar() {
                   </div>
                 </SheetHeader>
                 <div className="p-4 space-y-2">
-                  {isLoading? null : user ? (
+                  {isLoading? (
+                    <div className="h-6 w-32 bg-muted rounded-md animate-pulse" /> // Skeleton for mobile Dashboard/Get Started
+                  ) : user ? (
                      <Link href="/dashboard" className="font-medium text-primary block py-2" onClick={() => setIsMobileMenuOpen(false)}>
                        Dashboard
                      </Link>
@@ -108,7 +113,9 @@ export function Navbar() {
                   )}
                   {commonLinks}
                   <Separator className="my-4" />
-                  {isLoading ? null : user ? (
+                  {isLoading ? (
+                     <div className="h-8 w-full bg-muted rounded-md animate-pulse" /> // Skeleton for mobile Account Settings/Login
+                  ) : user ? (
                      <Link href="/dashboard/settings" className="text-muted-foreground transition-colors hover:text-foreground block py-2" onClick={() => setIsMobileMenuOpen(false)}>
                        Account Settings
                      </Link>
