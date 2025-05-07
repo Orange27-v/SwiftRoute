@@ -39,18 +39,13 @@ const mockUsersDb: Record<string, User> = {
   },
 };
 
-// To simulate different users, MANUALLY CHANGE THE VALUE of MOCKED_ACTIVE_USER_ID below and refresh your browser.
-// Examples:
-// let MOCKED_ACTIVE_USER_ID: string | null = 'user_business_123';        // Business User
-// let MOCKED_ACTIVE_USER_ID: string | null = 'user_logistics_456';         // Verified Logistics User
-// let MOCKED_ACTIVE_USER_ID: string | null = 'user_logistics_unverified_789'; // Unverified Logistics User
-// let MOCKED_ACTIVE_USER_ID: string | null = 'user_admin_789';             // Admin User
-// let MOCKED_ACTIVE_USER_ID: string | null = null;                         // Logged Out
-
-let MOCKED_ACTIVE_USER_ID: string | null = 'user_business_123'; // Default to business user
+// MOCKED_ACTIVE_USER_ID determines the currently "logged-in" user.
+// It defaults to null (logged out). Login/logout functions will modify this.
+// For initial testing of a specific logged-in state on app load, you can temporarily set this ID here.
+// e.g., let MOCKED_ACTIVE_USER_ID: string | null = 'user_business_123';
+let MOCKED_ACTIVE_USER_ID: string | null = null; 
 
 // Simulate getting the current user.
-// In a real app, this would involve checking session cookies or tokens.
 export async function getCurrentUser(): Promise<User | null> {
   if (!MOCKED_ACTIVE_USER_ID) {
     return null;
@@ -65,25 +60,21 @@ export async function isAuthenticated(): Promise<boolean> {
 }
 
 // Mock login function
-// NOTE: In this simplified mock, login/logout don't persistently change MOCKED_ACTIVE_USER_ID
-// for subsequent server component renders without a proper session mechanism (e.g., cookies).
-// For testing different roles, manually change MOCKED_ACTIVE_USER_ID at the top of this file.
 export async function login(email: string, password: string):Promise<{success: boolean, user?: User, message?: string}> {
   const userFound = Object.values(mockUsersDb).find(u => u.email === email);
 
   if (userFound && password === 'password') { // Simplified password check
-    // To make login "stick" for testing, you could update MOCKED_ACTIVE_USER_ID here,
-    // but it would require a client-side way to trigger re-render or a cookie mechanism.
-    // For now, this function primarily serves the UI login form.
-    // MOCKED_ACTIVE_USER_ID = userFound.id; // This line would "log in" the user for subsequent calls in the same request flow if it were client-side.
+    MOCKED_ACTIVE_USER_ID = userFound.id; // Set the active user ID
+    console.log(`Mock login: User ${userFound.name} (${userFound.id}) is now active.`);
     return { success: true, user: userFound };
   }
+  console.log(`Mock login: Failed for email ${email}.`);
   return { success: false, message: 'Invalid credentials' };
 }
 
 // Mock logout function
 export async function logout(): Promise<void> {
-  // MOCKED_ACTIVE_USER_ID = null; // This won't "stick" for server components without further mechanism.
-  console.log('User logged out (mock). Manual change of MOCKED_ACTIVE_USER_ID needed for testing logged out state.');
-  // In a real app, this would clear session cookies/tokens and likely redirect.
+  console.log(`Mock logout: User ${MOCKED_ACTIVE_USER_ID} is being logged out.`);
+  MOCKED_ACTIVE_USER_ID = null; // Clear the active user ID
+  console.log('Mock logout: MOCKED_ACTIVE_USER_ID is now null.');
 }

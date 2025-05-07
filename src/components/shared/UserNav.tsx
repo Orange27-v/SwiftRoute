@@ -15,7 +15,8 @@ import {
 import { LogOut, User as UserIcon, Settings, LifeBuoy } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getCurrentUser, logout } from '@/lib/auth'; // Using the mock auth
+import { getCurrentUser } from '@/lib/auth'; 
+import { handleLogout as performLogoutServerAction } from '@/lib/actions/auth.actions'; // Updated import
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -27,26 +28,39 @@ export function UserNav() {
 
   useEffect(() => {
     async function fetchUser() {
+      setIsLoading(true); // Ensure loading state is true at the start of fetch
       const currentUser = await getCurrentUser();
       setUser(currentUser);
       setIsLoading(false);
     }
     fetchUser();
-  }, []);
+  }, []); // Removed router from dependencies as it's stable, re-fetching should be triggered by router.refresh or navigation
 
   const handleLogout = async () => {
-    await logout(); // Call mock logout
-    setUser(null); // Update local state
-    toast({ title: "Logged Out", description: "You have been successfully logged out." });
-    router.push('/login'); // Redirect to login page
-    router.refresh(); // Refresh server components state
+    setIsLoading(true); // Set loading state for logout
+    try {
+      await performLogoutServerAction(); // Call the server action
+      // The server action now handles redirect and revalidation.
+      // Client-side redirect via router.push('/login') is handled by the server action's redirect().
+      // router.refresh() is also implicitly handled by revalidatePath and redirect.
+      toast({ title: "Logged Out", description: "You have been successfully logged out." });
+      // setUser(null) can be done for immediate optimistic UI update, but server redirect should handle it.
+      // Forcing client-side state update to ensure UI reflects logged out state before full navigation if needed.
+       setUser(null); 
+    } catch (error) {
+      toast({ title: "Logout Failed", description: "An error occurred during logout.", variant: "destructive" });
+      console.error("Logout error:", error);
+    } finally {
+       setIsLoading(false); // Reset loading state
+       // router.refresh(); // Ensure client-side components re-evaluate after logout action
+    }
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center space-x-2">
         <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
-        <div className="h-4 w-20 rounded bg-muted animate-pulse" />
+        {/* <div className="h-4 w-20 rounded bg-muted animate-pulse" /> */}
       </div>
     );
   }
@@ -54,14 +68,14 @@ export function UserNav() {
   if (!user) {
     return (
       <Link href="/login">
-        <Button variant="outline">Login</Button>
+        <Button variant="outline" size="sm">Login</Button>
       </Link>
     );
   }
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
-    if (names.length > 1) {
+    if (names.length > 1 && names[0] && names[names.length - 1]) {
       return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
@@ -117,8 +131,8 @@ export function UserNav() {
             </DropdownMenuItem>
           </Link>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
+        <DropdownMenuItem onClick={handleLogout} disabled={isLoading}>
+          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogOut className="mr-2 h-4 w-4" />}
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
