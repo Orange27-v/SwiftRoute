@@ -17,7 +17,7 @@ export default async function CreateOrderPage() {
           Fill in the details below to request a new delivery.
         </p>
       </div>
-      <Card className="shadow-md">
+      <Card className="shadow">
         <CardHeader>
           <CardTitle>Order Details</CardTitle>
           <CardDescription>Provide pickup, dropoff, item information, and your offered price.</CardDescription>

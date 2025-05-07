@@ -27,7 +27,7 @@ export default function RegisterPage() {
     <>
       <Navbar />
       <div className="flex flex-1 items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-lg">
+        <Card className="w-full max-w-md shadow-md">
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
               <Logo textSize="text-2xl" />
