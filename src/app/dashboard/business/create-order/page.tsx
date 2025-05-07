@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 export default async function CreateOrderPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== 'business') {
-    redirect('/login'); // Or to an unauthorized page
+    redirect('/login'); 
   }
 
   return (

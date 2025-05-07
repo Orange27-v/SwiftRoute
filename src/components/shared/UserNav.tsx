@@ -15,23 +15,32 @@ import {
 import { LogOut, User as UserIcon, Settings, LifeBuoy } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getCurrentUser } from '@/lib/auth'; // Using the mock auth
+import { getCurrentUser, logout } from '@/lib/auth'; // Using the mock auth
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export function UserNav() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchUser() {
-      // Simulate role for testing different nav states, remove for production
-      // const role = Math.random() > 0.5 ? 'business' : 'logistics';
-      // const currentUser = await getCurrentUser(role); 
-      const currentUser = await getCurrentUser(); // Default mock
+      const currentUser = await getCurrentUser();
       setUser(currentUser);
       setIsLoading(false);
     }
     fetchUser();
   }, []);
+
+  const handleLogout = async () => {
+    await logout(); // Call mock logout
+    setUser(null); // Update local state
+    toast({ title: "Logged Out", description: "You have been successfully logged out." });
+    router.push('/login'); // Redirect to login page
+    router.refresh(); // Refresh server components state
+  };
 
   if (isLoading) {
     return (
@@ -68,7 +77,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={`https://avatar.vercel.sh/${user.email}.png`} alt={user.name} />
+            <AvatarImage src={`https://avatar.vercel.sh/${user.email}.png?size=64`} alt={user.name} />
             <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
           </Avatar>
         </Button>
@@ -81,7 +90,7 @@ export function UserNav() {
               {user.email}
             </p>
             <p className="text-xs leading-none text-muted-foreground capitalize pt-1">
-              Role: {user.role}
+              Role: {user.role} {user.role === 'logistics' && `(${user.is_verified ? 'Verified' : 'Unverified'})`}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -94,7 +103,7 @@ export function UserNav() {
             </DropdownMenuItem>
           </Link>
           <Link href="/dashboard/settings">
-             <DropdownMenuItem disabled> {/* Disabled for now */}
+             <DropdownMenuItem> 
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
@@ -108,7 +117,7 @@ export function UserNav() {
             </DropdownMenuItem>
           </Link>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => alert('Mock logout triggered')}> {/* Replace with actual logout */}
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

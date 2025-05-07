@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { Users, PackageSearch, AlertTriangle } from 'lucide-react';
 
 export default async function AdminDashboardPage() {
-  const user = await getCurrentUser(); // Simulate admin user
+  const user = await getCurrentUser();
   if (!user || user.role !== 'admin') {
-    redirect('/login'); // Or to an unauthorized page
+    redirect('/login'); 
   }
 
   // In a real app, you'd fetch these counts from the database

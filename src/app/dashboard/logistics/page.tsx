@@ -8,9 +8,9 @@ import { redirect } from "next/navigation";
 import { format } from 'date-fns';
 
 export default async function LogisticsDashboardPage() {
-  const user = await getCurrentUser(); // Simulate logistics user for now
+  const user = await getCurrentUser(); 
   if (!user || user.role !== 'logistics') {
-    redirect('/login'); // Or to an unauthorized page
+    redirect('/login'); 
   }
 
   if (!user.is_verified) {
@@ -97,8 +97,8 @@ export default async function LogisticsDashboardPage() {
       <Separator />
 
       <LogisticsOrdersTabs 
-        availableOrders={availableOrders} 
-        myDeliveries={myDeliveries}
+        initialAvailableOrders={availableOrders} 
+        initialMyDeliveries={myDeliveries}
       />
     </div>
   );

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export default async function LogisticsProfilePage() {
-  const user = await getCurrentUser(); // Simulate logistics user
+  const user = await getCurrentUser(); 
   if (!user || user.role !== 'logistics') {
     redirect('/login');
   }
@@ -92,7 +92,7 @@ export default async function LogisticsProfilePage() {
                 </CardHeader>
                 <CardContent className="p-2 text-sm text-yellow-600">
                     Your account is currently awaiting verification by our admin team. 
-                    During this period, you can set up your profile, but you won't be able to accept delivery orders or receive payouts.
+                    During this period, you can set up your profile, but you won&apos;t be able to accept delivery orders or receive payouts.
                     We appreciate your patience.
                 </CardContent>
             </Card>

@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getBusinessOrders } from "@/lib/actions/order.actions";
 import { getCurrentUser } from "@/lib/auth";
-import { ArrowRight, Package, PlusCircle, CreditCard } from "lucide-react";
+import { ArrowRight, Package, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { OrderCard } from "@/components/dashboard/OrderCard"; // Reusing OrderCard for display
+import { OrderCard } from "@/components/dashboard/OrderCard"; 
 
 export default async function BusinessDashboardPage() {
   const user = await getCurrentUser();
@@ -15,13 +15,13 @@ export default async function BusinessDashboardPage() {
   }
 
   const orders = await getBusinessOrders();
-  const recentOrders = orders.slice(0, 3); // Show a few recent orders
+  const recentOrders = orders.slice(0, 3); 
 
   const activeOrdersCount = orders.filter(o => 
     o.status === 'pending_acceptance' || 
     o.status === 'pending_payment' || 
     o.status === 'in_escrow' ||
-    o.status === 'delivered' // awaiting confirmation
+    o.status === 'delivered' 
   ).length;
 
   const completedOrdersCount = orders.filter(o => o.status === 'confirmed_by_business').length;
