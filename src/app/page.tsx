@@ -45,7 +45,9 @@ export default function HomePage() {
                 height={400}
                 alt="Logistics network illustration"
                 data-ai-hint="logistics network"
-                className="mx-auto w-full h-auto overflow-hidden rounded-xl object-cover lg:order-last shadow-md"
+                className="block w-full max-w-full aspect-[3/2] object-cover rounded-xl shadow-lg lg:order-last"
+                priority // Added priority for LCP
+                sizes="(max-width: 1023px) 90vw, (max-width: 1279px) 400px, 600px" // Added sizes for optimization
               />
             </div>
           </div>
@@ -64,21 +66,21 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:gap-12 lg:grid-cols-3 lg:max-w-none mt-12">
-              <Card className="shadow-sm hover:shadow-md transition-shadow">
+              <Card className="shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <Truck className="h-10 w-10 text-primary mb-2" />
                   <CardTitle>Effortless Order Creation</CardTitle>
                   <CardDescription>Businesses can easily create delivery orders with detailed pickup/dropoff info and pricing.</CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="shadow-sm hover:shadow-md transition-shadow">
+              <Card className="shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <Users className="h-10 w-10 text-primary mb-2" />
                   <CardTitle>Verified Logistics Network</CardTitle>
                   <CardDescription>Access a curated list of verified and reliable logistics companies for your delivery needs.</CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="shadow-sm hover:shadow-md transition-shadow">
+              <Card className="shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <ShieldCheck className="h-10 w-10 text-primary mb-2" />
                   <CardTitle>Secure Escrow Payments</CardTitle>
@@ -102,7 +104,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-1 md:gap-12 lg:grid-cols-3 lg:max-w-none mt-12">
-                <Card className="shadow-sm hover:shadow-md transition-shadow">
+                <Card className="shadow-md hover:shadow-lg transition-shadow">
                     <CardHeader className="items-center">
                         <CardTitle>Basic</CardTitle>
                         <p className="text-4xl font-bold">$0<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
@@ -117,7 +119,7 @@ export default function HomePage() {
                          <Button variant="outline" className="w-full">Get Started</Button>
                     </CardFooter>
                 </Card>
-                 <Card className="shadow-md hover:shadow-lg transition-shadow border-2 border-primary relative">
+                 <Card className="shadow-lg hover:shadow-xl transition-shadow border-2 border-primary relative">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-3 py-1 text-sm rounded-full font-semibold">Most Popular</div>
                     <CardHeader className="items-center pt-8">
                         <CardTitle>Pro</CardTitle>
@@ -133,7 +135,7 @@ export default function HomePage() {
                          <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Choose Pro</Button>
                     </CardFooter>
                 </Card>
-                 <Card className="shadow-sm hover:shadow-md transition-shadow">
+                 <Card className="shadow-md hover:shadow-lg transition-shadow">
                     <CardHeader className="items-center">
                         <CardTitle>Enterprise</CardTitle>
                          <p className="text-4xl font-bold">Custom</p>
@@ -162,7 +164,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-1 md:gap-12 lg:grid-cols-2 lg:max-w-none mt-12">
-              <Card className="shadow-sm">
+              <Card className="shadow-md">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
                     <Image src="https://avatar.vercel.sh/jane.png?size=64" alt="User Jane" width={48} height={48} className="rounded-full mr-4" />
@@ -179,7 +181,7 @@ export default function HomePage() {
                   </blockquote>
                 </CardContent>
               </Card>
-              <Card className="shadow-sm">
+              <Card className="shadow-md">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
                     <Image src="https://avatar.vercel.sh/john.png?size=64" alt="User John" width={48} height={48} className="rounded-full mr-4" />
