@@ -109,7 +109,7 @@ export function OrderCard({ order, currentUserRole, onActionComplete }: OrderCar
   const StatusIcon = statusIcons[order.status] || AlertTriangle;
 
   return (
-    <Card className="w-full shadow-md hover:shadow-lg transition-shadow">
+    <Card className="w-full shadow-sm hover:shadow-md transition-shadow">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>

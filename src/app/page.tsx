@@ -1,4 +1,5 @@
 
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, ShieldCheck, Truck, Users, Star } from "lucide-react";
@@ -63,21 +64,21 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:gap-12 lg:grid-cols-3 lg:max-w-none mt-12">
-              <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <Card className="shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <Truck className="h-10 w-10 text-primary mb-2" />
                   <CardTitle>Effortless Order Creation</CardTitle>
                   <CardDescription>Businesses can easily create delivery orders with detailed pickup/dropoff info and pricing.</CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <Card className="shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <Users className="h-10 w-10 text-primary mb-2" />
                   <CardTitle>Verified Logistics Network</CardTitle>
                   <CardDescription>Access a curated list of verified and reliable logistics companies for your delivery needs.</CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <Card className="shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <ShieldCheck className="h-10 w-10 text-primary mb-2" />
                   <CardTitle>Secure Escrow Payments</CardTitle>
@@ -101,7 +102,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-1 md:gap-12 lg:grid-cols-3 lg:max-w-none mt-12">
-                <Card className="shadow-md hover:shadow-lg transition-shadow">
+                <Card className="shadow-sm hover:shadow-md transition-shadow">
                     <CardHeader className="items-center">
                         <CardTitle>Basic</CardTitle>
                         <p className="text-4xl font-bold">$0<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
@@ -116,7 +117,7 @@ export default function HomePage() {
                          <Button variant="outline" className="w-full">Get Started</Button>
                     </CardFooter>
                 </Card>
-                 <Card className="shadow-lg hover:shadow-xl transition-shadow border-2 border-primary relative">
+                 <Card className="shadow-md hover:shadow-lg transition-shadow border-2 border-primary relative">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-3 py-1 text-sm rounded-full font-semibold">Most Popular</div>
                     <CardHeader className="items-center pt-8">
                         <CardTitle>Pro</CardTitle>
@@ -132,7 +133,7 @@ export default function HomePage() {
                          <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Choose Pro</Button>
                     </CardFooter>
                 </Card>
-                 <Card className="shadow-md hover:shadow-lg transition-shadow">
+                 <Card className="shadow-sm hover:shadow-md transition-shadow">
                     <CardHeader className="items-center">
                         <CardTitle>Enterprise</CardTitle>
                          <p className="text-4xl font-bold">Custom</p>

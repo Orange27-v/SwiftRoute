@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/shared/Navbar";
 
 export default function AuthLayout({
   children,
@@ -7,8 +6,8 @@ export default function AuthLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex flex-1 items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 p-4">
+      {/* Navbar is now part of individual login/register pages to avoid redundancy */}
+      <main className="flex flex-1 flex-col"> {/* Removed items-center and justify-center to allow pages to control their layout */}
         {children}
       </main>
     </div>

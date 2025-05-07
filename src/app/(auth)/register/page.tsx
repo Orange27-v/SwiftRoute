@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import Link from "next/link";
 import { Logo } from "@/components/shared/Logo";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Navbar } from "@/components/shared/Navbar";
 
 export default function RegisterPage() {
   const searchParams = useSearchParams();
@@ -22,52 +24,55 @@ export default function RegisterPage() {
 
 
   return (
-    <div className="flex items-center justify-center w-full">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="space-y-1 text-center">
-           <div className="flex justify-center mb-4">
-            <Logo textSize="text-2xl" />
-          </div>
-          <CardTitle className="text-2xl">Create your SwiftRoute Account</CardTitle>
-          <CardDescription>Join us as a Business or Logistics Partner.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name / Company Name</Label>
-            <Input id="name" placeholder="Your Name or Company LLC" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="name@example.com" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" placeholder="••••••••" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="accountType">I want to register as a</Label>
-            <Select value={accountType} onValueChange={(value) => setAccountType(value as 'business' | 'logistics')}>
-              <SelectTrigger id="accountType">
-                <SelectValue placeholder="Select account type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="business">Business (to ship goods)</SelectItem>
-                <SelectItem value="logistics">Logistics Company (to offer delivery)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Create Account</Button>
-          <div className="text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="font-medium text-primary hover:underline">
-              Log in
-            </Link>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+    <>
+      <Navbar />
+      <div className="flex flex-1 items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader className="space-y-1 text-center">
+            <div className="flex justify-center mb-4">
+              <Logo textSize="text-2xl" />
+            </div>
+            <CardTitle className="text-2xl">Create your SwiftRoute Account</CardTitle>
+            <CardDescription>Join us as a Business or Logistics Partner.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name / Company Name</Label>
+              <Input id="name" placeholder="Your Name or Company LLC" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="name@example.com" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" type="password" placeholder="••••••••" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="accountType">I want to register as a</Label>
+              <Select value={accountType} onValueChange={(value) => setAccountType(value as 'business' | 'logistics')}>
+                <SelectTrigger id="accountType">
+                  <SelectValue placeholder="Select account type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="business">Business (to ship goods)</SelectItem>
+                  <SelectItem value="logistics">Logistics Company (to offer delivery)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4">
+            <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Create Account</Button>
+            <div className="text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link href="/login" className="font-medium text-primary hover:underline">
+                Log in
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+    </>
   );
 }
 
