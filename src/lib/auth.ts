@@ -1,3 +1,4 @@
+
 import type { User, UserRole } from '@/types';
 
 // This is a mock authentication module.
@@ -8,8 +9,8 @@ const mockUsersDb: Record<string, User> = {
   'user_business_123': {
     id: 'user_business_123',
     name: 'Acme Corp',
-    email: 'business@example.com',
-    password: 'password', // Added password
+    email: 'business@example.com', // Stored in lowercase
+    password: 'password_business', 
     role: 'business',
     is_verified: true,
     created_at: new Date('2023-01-01T10:00:00Z'),
@@ -17,8 +18,8 @@ const mockUsersDb: Record<string, User> = {
   'user_logistics_456': {
     id: 'user_logistics_456',
     name: 'Speedy Deliveries',
-    email: 'logistics@example.com',
-    password: 'password', // Added password
+    email: 'logistics@example.com', // Stored in lowercase
+    password: 'password_logistics', 
     role: 'logistics',
     is_verified: true,
     created_at: new Date('2023-01-15T12:00:00Z'),
@@ -26,8 +27,8 @@ const mockUsersDb: Record<string, User> = {
   'user_logistics_unverified_789': {
     id: 'user_logistics_unverified_789',
     name: 'Pending Logistics Co.',
-    email: 'pending@example.com',
-    password: 'password', // Added password
+    email: 'pending@example.com', // Stored in lowercase
+    password: 'password_pending_logistics', 
     role: 'logistics',
     is_verified: false,
     created_at: new Date('2023-02-01T10:00:00Z'),
@@ -35,8 +36,8 @@ const mockUsersDb: Record<string, User> = {
   'user_admin_789': {
     id: 'user_admin_789',
     name: 'Admin User',
-    email: 'admin@example.com',
-    password: 'password', // Added password
+    email: 'admin@example.com', // Stored in lowercase
+    password: 'password_admin', 
     role: 'admin',
     is_verified: true,
     created_at: new Date('2023-01-01T08:00:00Z'),
@@ -45,20 +46,17 @@ const mockUsersDb: Record<string, User> = {
 
 // MOCKED_ACTIVE_USER_ID determines the currently "logged-in" user.
 // It defaults to null (logged out). Login/logout functions will modify this.
-// For initial testing of a specific logged-in state on app load, you can temporarily set this ID here.
-// e.g., let MOCKED_ACTIVE_USER_ID: string | null = 'user_business_123';
 let MOCKED_ACTIVE_USER_ID: string | null = null; 
 
 // Simulate getting the current user.
 export async function getCurrentUser(): Promise<User | null> {
-  // Ensure that the app stays logged out if MOCKED_ACTIVE_USER_ID is null
   if (!MOCKED_ACTIVE_USER_ID) {
     return null;
   }
   const user = mockUsersDb[MOCKED_ACTIVE_USER_ID];
+  // If MOCKED_ACTIVE_USER_ID is set but user not found (e.g., ID was stale/invalid), treat as logged out.
   if (!user) {
-    // If MOCKED_ACTIVE_USER_ID is set but user not found, logout
-    MOCKED_ACTIVE_USER_ID = null;
+    MOCKED_ACTIVE_USER_ID = null; // Ensure logout state
     return null;
   }
   return user;
@@ -72,20 +70,27 @@ export async function isAuthenticated(): Promise<boolean> {
 
 // Mock login function
 export async function login(email: string, password: string):Promise<{success: boolean, user?: User, message?: string}> {
-  const userFound = Object.values(mockUsersDb).find(u => u.email === email);
+  // Make email comparison case-insensitive
+  const userFound = Object.values(mockUsersDb).find(u => u.email.toLowerCase() === email.toLowerCase());
 
   if (userFound && userFound.password === password) { // Check against stored password
     MOCKED_ACTIVE_USER_ID = userFound.id; // Set the active user ID
     console.log(`Mock login: User ${userFound.name} (${userFound.id}) is now active.`);
     return { success: true, user: userFound };
   }
-  console.log(`Mock login: Failed for email ${email}.`);
-  return { success: false, message: 'Invalid credentials' };
+  console.log(`Mock login: Failed for email ${email}. User found: ${!!userFound}, Password provided: ${password}, Expected password: ${userFound?.password}, Password match: ${userFound ? userFound.password === password : 'N/A'}`);
+  return { success: false, message: 'Invalid credentials. Please check your email and password.' };
 }
 
 // Mock logout function
 export async function logout(): Promise<void> {
-  console.log(`Mock logout: User ${MOCKED_ACTIVE_USER_ID} is being logged out.`);
+  const currentUserId = MOCKED_ACTIVE_USER_ID;
   MOCKED_ACTIVE_USER_ID = null; // Clear the active user ID
+  if (currentUserId) {
+    const loggedOutUser = mockUsersDb[currentUserId];
+    console.log(`Mock logout: User ${loggedOutUser?.name || currentUserId} has been logged out.`);
+  } else {
+    console.log('Mock logout: No active user to log out.');
+  }
   console.log('Mock logout: MOCKED_ACTIVE_USER_ID is now null.');
 }
