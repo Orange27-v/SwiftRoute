@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, ShieldCheck, Truck, Users, Star } from "lucide-react";
@@ -38,14 +39,14 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex justify-center items-center lg:order-last">
-                <div className="relative w-full aspect-[3/2] rounded-xl shadow-md overflow-hidden">
+                <div className="relative w-full max-w-xl aspect-[4/3] rounded-xl shadow-lg overflow-hidden">
                   <Image
-                    src="/api/placeholder/600/400"
+                    src="/api/placeholder/600/450"
                     alt="Logistics network illustration"
                     fill
                     className="object-cover"
                     priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 600px"
+                    sizes="(max-width: 640px) 90vw, (max-width: 768px) 80vw, (max-width: 1024px) 600px, 600px"
                     data-ai-hint="logistics network"
                   />
                 </div>
@@ -92,15 +93,15 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Pricing Section Placeholder */}
+        {/* Pricing Section - Updated for Logistics Companies */}
         <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-secondary/50">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground">Pricing</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Flexible Plans for Everyone</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Flexible Plans for Logistics Providers</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Choose a plan that fits your business needs. Transparent pricing with no hidden fees.
+                  Choose a plan that empowers your delivery business and connects you with more clients. Transparent pricing to maximize your reach.
                 </p>
               </div>
             </div>
@@ -109,15 +110,17 @@ export default function HomePage() {
                 <CardHeader className="items-center">
                   <CardTitle>Basic</CardTitle>
                   <p className="text-4xl font-bold">$0<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-                  <CardDescription>Perfect for small businesses just starting out.</CardDescription>
+                  <CardDescription>Ideal for new logistics partners or individual couriers.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <p className="text-sm text-muted-foreground">- Up to 10 orders/month</p>
+                  <p className="text-sm text-muted-foreground">- Handle up to 10 client orders/month</p>
                   <p className="text-sm text-muted-foreground">- Basic support</p>
-                  <p className="text-sm text-muted-foreground">- Escrow fee: 5%</p>
+                  <p className="text-sm text-muted-foreground">- Platform fee on deliveries: 5%</p>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="outline" className="w-full">Get Started</Button>
+                  <Link href="/register?type=logistics" className="w-full">
+                    <Button variant="outline" className="w-full">Register as Logistics Partner</Button>
+                  </Link>
                 </CardFooter>
               </Card>
               <Card className="shadow-md hover:shadow-lg transition-shadow border-2 border-primary relative">
@@ -125,30 +128,33 @@ export default function HomePage() {
                 <CardHeader className="items-center pt-8">
                   <CardTitle>Pro</CardTitle>
                   <p className="text-4xl font-bold">$49<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-                  <CardDescription>For growing businesses needing more volume.</CardDescription>
+                  <CardDescription>For established delivery companies aiming to expand.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <p className="text-sm text-muted-foreground">- Up to 100 orders/month</p>
+                  <p className="text-sm text-muted-foreground">- Handle up to 100 client orders/month</p>
                   <p className="text-sm text-muted-foreground">- Priority support</p>
-                  <p className="text-sm text-muted-foreground">- Escrow fee: 3.5%</p>
+                  <p className="text-sm text-muted-foreground">- Platform fee on deliveries: 3.5%</p>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Choose Pro</Button>
+                  <Link href="/register?type=logistics" className="w-full">
+                    <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Register as Logistics Partner</Button>
+                  </Link>
                 </CardFooter>
               </Card>
               <Card className="shadow hover:shadow-md transition-shadow">
                 <CardHeader className="items-center">
                   <CardTitle>Enterprise</CardTitle>
                   <p className="text-4xl font-bold">Custom</p>
-                  <CardDescription>Tailored solutions for large scale operations.</CardDescription>
+                  <CardDescription>Custom solutions for large-scale logistics operations.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <p className="text-sm text-muted-foreground">- Unlimited orders</p>
-                  <p className="text-sm text-muted-foreground">- Dedicated support</p>
-                  <p className="text-sm text-muted-foreground">- Custom escrow fees</p>
+                  <p className="text-sm text-muted-foreground">- Handle unlimited client orders</p>
+                  <p className="text-sm text-muted-foreground">- Dedicated account management</p>
+                  <p className="text-sm text-muted-foreground">- Custom platform fees</p>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="outline" className="w-full">Contact Us</Button>
+                   {/* Assuming "Contact Us" would lead to a sales inquiry, not direct registration */}
+                  <Button variant="outline" className="w-full">Contact Sales</Button>
                 </CardFooter>
               </Card>
             </div>
@@ -258,3 +264,5 @@ export default function HomePage() {
     </>
   );
 }
+
+    
