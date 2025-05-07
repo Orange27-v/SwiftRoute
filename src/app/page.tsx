@@ -42,13 +42,13 @@ export default function HomePage() {
               <div className="lg:order-last w-full"> 
                 <div className="relative aspect-[3/2] overflow-hidden rounded-xl shadow-sm">
                   <Image
-                    src="https://picsum.photos/seed/logistics-hero/600/400"
+                    src="https://picsum.photos/seed/logistics-hero/600/400" // Adjusted placeholder ratio to 3:2
                     alt="Logistics network illustration"
                     data-ai-hint="logistics network"
                     fill
-                    className="object-contain"
+                    className="object-cover" // Changed to object-cover to fill the 3:2 aspect ratio
                     priority
-                    sizes="(max-width: 666px) 90vw, (max-width: 1023px) 600px, (max-width: 1279px) 400px, 600px"
+                    sizes="(max-width: 639px) 90vw, (max-width: 1023px) 600px, (max-width: 1279px) 400px, 600px"
                   />
                 </div>
               </div>
