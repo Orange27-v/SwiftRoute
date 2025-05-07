@@ -24,12 +24,24 @@ export async function Navbar() {
           <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
             Features
           </Link>
-          {/* <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
-            Pricing
-          </Link> */}
-          <UserNav />
+          {!user && (
+            <>
+              <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
+                Pricing
+              </Link>
+              <Link href="/#testimonials" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
+                Testimonials
+              </Link>
+            </>
+          )}
+          {user ? <UserNav /> : (
+            <Link href="/login" className="md:hidden"> {/* Show login on mobile if no user */}
+                <Button variant="outline" size="sm">Login</Button>
+            </Link>
+          )}
         </nav>
       </div>
     </header>
   );
 }
+

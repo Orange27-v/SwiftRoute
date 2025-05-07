@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, ShieldCheck, Truck, Users } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, ShieldCheck, Truck, Users, Star } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/shared/Navbar";
 import Image from "next/image";
@@ -87,6 +88,117 @@ export default function HomePage() {
           </div>
         </section>
         
+        {/* Pricing Section Placeholder */}
+        <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-secondary/50">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground">Pricing</div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Flexible Plans for Everyone</h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Choose a plan that fits your business needs. Transparent pricing with no hidden fees.
+                </p>
+              </div>
+            </div>
+            <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-1 md:gap-12 lg:grid-cols-3 lg:max-w-none mt-12">
+                <Card className="shadow-md hover:shadow-lg transition-shadow">
+                    <CardHeader className="items-center">
+                        <CardTitle>Basic</CardTitle>
+                        <p className="text-4xl font-bold">$0<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
+                        <CardDescription>Perfect for small businesses just starting out.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        <p className="text-sm text-muted-foreground">- Up to 10 orders/month</p>
+                        <p className="text-sm text-muted-foreground">- Basic support</p>
+                        <p className="text-sm text-muted-foreground">- Escrow fee: 5%</p>
+                    </CardContent>
+                    <CardFooter>
+                         <Button variant="outline" className="w-full">Get Started</Button>
+                    </CardFooter>
+                </Card>
+                 <Card className="shadow-lg hover:shadow-xl transition-shadow border-2 border-primary relative">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-3 py-1 text-sm rounded-full font-semibold">Most Popular</div>
+                    <CardHeader className="items-center pt-8">
+                        <CardTitle>Pro</CardTitle>
+                        <p className="text-4xl font-bold">$49<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
+                        <CardDescription>For growing businesses needing more volume.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        <p className="text-sm text-muted-foreground">- Up to 100 orders/month</p>
+                        <p className="text-sm text-muted-foreground">- Priority support</p>
+                        <p className="text-sm text-muted-foreground">- Escrow fee: 3.5%</p>
+                    </CardContent>
+                     <CardFooter>
+                         <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Choose Pro</Button>
+                    </CardFooter>
+                </Card>
+                 <Card className="shadow-md hover:shadow-lg transition-shadow">
+                    <CardHeader className="items-center">
+                        <CardTitle>Enterprise</CardTitle>
+                         <p className="text-4xl font-bold">Custom</p>
+                        <CardDescription>Tailored solutions for large scale operations.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        <p className="text-sm text-muted-foreground">- Unlimited orders</p>
+                        <p className="text-sm text-muted-foreground">- Dedicated support</p>
+                        <p className="text-sm text-muted-foreground">- Custom escrow fees</p>
+                    </CardContent>
+                     <CardFooter>
+                         <Button variant="outline" className="w-full">Contact Us</Button>
+                    </CardFooter>
+                </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section Placeholder */}
+        <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-background">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm text-secondary-foreground">What Our Users Say</div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Trusted by Businesses Like Yours</h2>
+              </div>
+            </div>
+            <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-1 md:gap-12 lg:grid-cols-2 lg:max-w-none mt-12">
+              <Card className="shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <Image src="https://avatar.vercel.sh/jane.png?size=64" alt="User Jane" width={48} height={48} className="rounded-full mr-4" />
+                    <div>
+                      <p className="font-semibold">Jane Doe</p>
+                      <p className="text-sm text-muted-foreground">CEO, Bloom Florists</p>
+                    </div>
+                  </div>
+                  <div className="flex mb-2">
+                    {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
+                  </div>
+                  <blockquote className="text-muted-foreground italic">
+                    "SwiftRoute has revolutionized how we handle our local flower deliveries. The escrow system gives us so much peace of mind!"
+                  </blockquote>
+                </CardContent>
+              </Card>
+              <Card className="shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <Image src="https://avatar.vercel.sh/john.png?size=64" alt="User John" width={48} height={48} className="rounded-full mr-4" />
+                    <div>
+                      <p className="font-semibold">John Smith</p>
+                      <p className="text-sm text-muted-foreground">Logistics Manager, Speedy Parcel Co.</p>
+                    </div>
+                  </div>
+                   <div className="flex mb-2">
+                    {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
+                  </div>
+                  <blockquote className="text-muted-foreground italic">
+                    "Finding reliable businesses to partner with was always a challenge. SwiftRoute's verified network and transparent process has been a game changer for us."
+                  </blockquote>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* Call to Action Section */}
          <section className="w-full py-12 md:py-24 lg:py-32 border-t">
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
