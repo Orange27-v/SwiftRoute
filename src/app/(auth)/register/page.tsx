@@ -1,3 +1,4 @@
+
 'use client'
 
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ export default function RegisterPage() {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center w-full">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-1 text-center">
            <div className="flex justify-center mb-4">
@@ -69,3 +70,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+
