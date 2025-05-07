@@ -29,10 +29,13 @@ export function SettingsPopover({ user }: SettingsPopoverProps) {
     setIsLoggingOut(true);
     try {
       await performLogoutServerAction();
-      toast({ title: "Logged Out", description: "You have been successfully logged out." });
+      // If performLogoutServerAction redirects, this part of the try block might not be reached.
+      // The redirect itself is the primary indication of success.
+      // A success toast here (like "Logged Out") might be preempted or cause issues.
     } catch (error) {
+      // This will catch genuine errors from performLogoutServerAction.
+      console.error("Popover logout error:", error);
       toast({ title: "Logout Failed", description: "An error occurred during logout.", variant: "destructive" });
-      console.error("Logout error:", error);
     } finally {
       setIsLoggingOut(false);
     }

@@ -12,11 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User as UserIcon, Settings, LifeBuoy } from 'lucide-react';
+import { LogOut, User as UserIcon, Settings, LifeBuoy, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getCurrentUser } from '@/lib/auth'; 
-import { handleLogout as performLogoutServerAction } from '@/lib/actions/auth.actions'; // Updated import
+import { handleLogout as performLogoutServerAction } from '@/lib/actions/auth.actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -28,39 +28,35 @@ export function UserNav() {
 
   useEffect(() => {
     async function fetchUser() {
-      setIsLoading(true); // Ensure loading state is true at the start of fetch
+      setIsLoading(true); 
       const currentUser = await getCurrentUser();
       setUser(currentUser);
       setIsLoading(false);
     }
     fetchUser();
-  }, []); // Removed router from dependencies as it's stable, re-fetching should be triggered by router.refresh or navigation
+  }, []);
 
   const handleLogout = async () => {
-    setIsLoading(true); // Set loading state for logout
+    setIsLoading(true);
     try {
-      await performLogoutServerAction(); // Call the server action
-      // The server action now handles redirect and revalidation.
-      // Client-side redirect via router.push('/login') is handled by the server action's redirect().
-      // router.refresh() is also implicitly handled by revalidatePath and redirect.
-      toast({ title: "Logged Out", description: "You have been successfully logged out." });
-      // setUser(null) can be done for immediate optimistic UI update, but server redirect should handle it.
-      // Forcing client-side state update to ensure UI reflects logged out state before full navigation if needed.
-       setUser(null); 
+      await performLogoutServerAction();
+      // If performLogoutServerAction redirects, this part of the try block might not be reached.
+      // The redirect itself is the primary indication of success.
+      // A success toast here might be preempted or cause issues if the promise behaves unexpectedly with redirects.
+      // User state (setUser(null)) should ideally be updated via re-fetching after redirect and layout revalidation.
     } catch (error) {
+      // This will catch genuine errors from performLogoutServerAction.
+      console.error("Client-side logout error:", error);
       toast({ title: "Logout Failed", description: "An error occurred during logout.", variant: "destructive" });
-      console.error("Logout error:", error);
     } finally {
-       setIsLoading(false); // Reset loading state
-       // router.refresh(); // Ensure client-side components re-evaluate after logout action
+       setIsLoading(false); 
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !user) { // Show loading skeleton only if user is not yet loaded
     return (
       <div className="flex items-center space-x-2">
         <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
-        {/* <div className="h-4 w-20 rounded bg-muted animate-pulse" /> */}
       </div>
     );
   }
