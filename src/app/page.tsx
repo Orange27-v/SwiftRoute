@@ -45,7 +45,7 @@ export default function HomePage() {
                 height={400}
                 alt="Logistics network illustration"
                 data-ai-hint="logistics network"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square shadow-lg"
+                className="mx-auto w-full h-auto overflow-hidden rounded-xl object-cover lg:order-last shadow-md"
               />
             </div>
           </div>
