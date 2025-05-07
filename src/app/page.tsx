@@ -1,5 +1,4 @@
 
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, ShieldCheck, Truck, Users, Star } from "lucide-react";
@@ -39,16 +38,20 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
-              <Image
-                src="https://picsum.photos/seed/logistics-hero/600/400"
-                width={600}
-                height={400}
-                alt="Logistics network illustration"
-                data-ai-hint="logistics network"
-                className="block w-full max-w-full aspect-[3/2] object-cover rounded-xl shadow-lg lg:order-last"
-                priority // Added priority for LCP
-                sizes="(max-width: 1023px) 90vw, (max-width: 1279px) 400px, 600px" // Added sizes for optimization
-              />
+              {/* Image's grid item wrapper */}
+              <div className="lg:order-last w-full"> 
+                <div className="relative aspect-[3/2] overflow-hidden rounded-xl shadow-lg">
+                  <Image
+                    src="https://picsum.photos/seed/logistics-hero/600/400"
+                    alt="Logistics network illustration"
+                    data-ai-hint="logistics network"
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 1023px) 90vw, (max-width: 1279px) 400px, 600px"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </section>
