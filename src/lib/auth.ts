@@ -9,6 +9,7 @@ const mockUsersDb: Record<string, User> = {
     id: 'user_business_123',
     name: 'Acme Corp',
     email: 'business@example.com',
+    password: 'password', // Added password
     role: 'business',
     is_verified: true,
     created_at: new Date('2023-01-01T10:00:00Z'),
@@ -17,6 +18,7 @@ const mockUsersDb: Record<string, User> = {
     id: 'user_logistics_456',
     name: 'Speedy Deliveries',
     email: 'logistics@example.com',
+    password: 'password', // Added password
     role: 'logistics',
     is_verified: true,
     created_at: new Date('2023-01-15T12:00:00Z'),
@@ -25,6 +27,7 @@ const mockUsersDb: Record<string, User> = {
     id: 'user_logistics_unverified_789',
     name: 'Pending Logistics Co.',
     email: 'pending@example.com',
+    password: 'password', // Added password
     role: 'logistics',
     is_verified: false,
     created_at: new Date('2023-02-01T10:00:00Z'),
@@ -33,6 +36,7 @@ const mockUsersDb: Record<string, User> = {
     id: 'user_admin_789',
     name: 'Admin User',
     email: 'admin@example.com',
+    password: 'password', // Added password
     role: 'admin',
     is_verified: true,
     created_at: new Date('2023-01-01T08:00:00Z'),
@@ -47,10 +51,17 @@ let MOCKED_ACTIVE_USER_ID: string | null = null;
 
 // Simulate getting the current user.
 export async function getCurrentUser(): Promise<User | null> {
+  // Ensure that the app stays logged out if MOCKED_ACTIVE_USER_ID is null
   if (!MOCKED_ACTIVE_USER_ID) {
     return null;
   }
-  return mockUsersDb[MOCKED_ACTIVE_USER_ID] || null;
+  const user = mockUsersDb[MOCKED_ACTIVE_USER_ID];
+  if (!user) {
+    // If MOCKED_ACTIVE_USER_ID is set but user not found, logout
+    MOCKED_ACTIVE_USER_ID = null;
+    return null;
+  }
+  return user;
 }
 
 // Mock function to check if user is authenticated
@@ -63,7 +74,7 @@ export async function isAuthenticated(): Promise<boolean> {
 export async function login(email: string, password: string):Promise<{success: boolean, user?: User, message?: string}> {
   const userFound = Object.values(mockUsersDb).find(u => u.email === email);
 
-  if (userFound && password === 'password') { // Simplified password check
+  if (userFound && userFound.password === password) { // Check against stored password
     MOCKED_ACTIVE_USER_ID = userFound.id; // Set the active user ID
     console.log(`Mock login: User ${userFound.name} (${userFound.id}) is now active.`);
     return { success: true, user: userFound };
