@@ -1,11 +1,14 @@
+// src/components/shared/Navbar.tsx
 import Link from 'next/link';
 import { Logo } from '@/components/shared/Logo';
 import { UserNav } from '@/components/shared/UserNav';
 import { Button } from '@/components/ui/button';
-import { getCurrentUser } from '@/lib/auth'; 
+import { getCurrentUser } from '@/lib/auth';
 
 export async function Navbar() {
-  const user = await getCurrentUser(); 
+  const user = await getCurrentUser();
+  // console.log('Navbar - Current user:', user?.email, 'ID:', user?.id, 'Role:', user?.role);
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,7 +20,6 @@ export async function Navbar() {
               Dashboard
             </Link>
           ) : (
-            // When logged out, show "Explore Platform" instead of "Dashboard" or "Get Started" button
             <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
               Explore Platform
             </Link>
@@ -39,7 +41,7 @@ export async function Navbar() {
           )}
 
           {user ? <UserNav /> : (
-             <Link href="/login"> {/* Show login on all screen sizes if no user & Get Started is now Explore Platform */}
+             <Link href="/login">
                 <Button variant="outline" size="sm">Login</Button>
             </Link>
           )}
