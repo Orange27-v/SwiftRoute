@@ -17,13 +17,16 @@ export async function Navbar() {
               Dashboard
             </Link>
           ) : (
-             <Link href="/register" className="hidden md:block">
-                <Button variant="outline" size="sm">Get Started</Button>
+            // When logged out, show "Explore Platform" instead of "Dashboard" or "Get Started" button
+            <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
+              Explore Platform
             </Link>
           )}
+          
           <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
             Features
           </Link>
+
           {!user && (
             <>
               <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
@@ -34,8 +37,9 @@ export async function Navbar() {
               </Link>
             </>
           )}
+
           {user ? <UserNav /> : (
-            <Link href="/login" className="md:hidden"> {/* Show login on mobile if no user */}
+             <Link href="/login"> {/* Show login on all screen sizes if no user & Get Started is now Explore Platform */}
                 <Button variant="outline" size="sm">Login</Button>
             </Link>
           )}
@@ -44,4 +48,3 @@ export async function Navbar() {
     </header>
   );
 }
-
