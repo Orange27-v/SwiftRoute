@@ -109,13 +109,14 @@ export default function HomePage() {
               <Card className="shadow hover:shadow-md transition-shadow">
                 <CardHeader className="items-center">
                   <CardTitle>Basic</CardTitle>
-                  <p className="text-4xl font-bold">$0<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
                   <CardDescription>Ideal for new logistics partners or individual couriers.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
+                  <p className="text-sm text-muted-foreground">- No monthly fee – Pay 5% per delivery</p>
                   <p className="text-sm text-muted-foreground">- Handle up to 10 client orders/month</p>
                   <p className="text-sm text-muted-foreground">- Basic support</p>
-                  <p className="text-sm text-muted-foreground">- Platform fee on deliveries: 5%</p>
+                  <p className="text-sm text-muted-foreground">- Escrow-secured payments</p>
+                  <p className="text-sm text-muted-foreground">- Delivery tracking tools</p>
                 </CardContent>
                 <CardFooter>
                   <Link href="/register?type=logistics" className="w-full">
@@ -127,13 +128,14 @@ export default function HomePage() {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-3 py-1 text-sm rounded-full font-semibold">Most Popular</div>
                 <CardHeader className="items-center pt-8">
                   <CardTitle>Pro</CardTitle>
-                  <p className="text-4xl font-bold">$49<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
                   <CardDescription>For established delivery companies aiming to expand.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
+                  <p className="text-sm text-muted-foreground">- Reduced fees – Pay 3.5% per delivery</p>
                   <p className="text-sm text-muted-foreground">- Handle up to 100 client orders/month</p>
                   <p className="text-sm text-muted-foreground">- Priority support</p>
-                  <p className="text-sm text-muted-foreground">- Platform fee on deliveries: 3.5%</p>
+                  <p className="text-sm text-muted-foreground">- Escrow-secured payments</p>
+                  <p className="text-sm text-muted-foreground">- Advanced delivery analytics</p>
                 </CardContent>
                 <CardFooter>
                   <Link href="/register?type=logistics" className="w-full">
@@ -144,13 +146,13 @@ export default function HomePage() {
               <Card className="shadow hover:shadow-md transition-shadow">
                 <CardHeader className="items-center">
                   <CardTitle>Enterprise</CardTitle>
-                  <p className="text-4xl font-bold">Custom</p>
                   <CardDescription>Custom solutions for large-scale logistics operations.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
+                   <p className="text-sm text-muted-foreground">- Custom platform fees per delivery</p>
                   <p className="text-sm text-muted-foreground">- Handle unlimited client orders</p>
                   <p className="text-sm text-muted-foreground">- Dedicated account management</p>
-                  <p className="text-sm text-muted-foreground">- Custom platform fees</p>
+                   <p className="text-sm text-muted-foreground">- Customizable API access</p>
                 </CardContent>
                 <CardFooter>
                    {/* Assuming "Contact Us" would lead to a sales inquiry, not direct registration */}
@@ -264,5 +266,3 @@ export default function HomePage() {
     </>
   );
 }
-
-    
