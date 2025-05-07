@@ -1,28 +1,56 @@
 // src/components/shared/Navbar.tsx
+'use client';
+
 import Link from 'next/link';
 import { Logo } from '@/components/shared/Logo';
 import { UserNav } from '@/components/shared/UserNav';
 import { Button } from '@/components/ui/button';
-import { getCurrentUser } from '@/lib/auth';
-import { Menu } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+import { Menu, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import type { User } from '@/types';
+import { getCurrentUser } from '@/lib/auth'; // Keep this for initial server render hint if needed, but client will fetch
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Separator } from '../ui/separator';
 
-export async function Navbar() {
-  const user = await getCurrentUser();
+export function Navbar() {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    async function fetchUser() {
+      setIsLoading(true);
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+      setIsLoading(false);
+    }
+    fetchUser();
+  }, []);
+
+  const commonLinks = (
+    <>
+      <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+        Features
+      </Link>
+      {!user && (
+        <>
+          <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+            Pricing
+          </Link>
+          <Link href="/#testimonials" className="text-muted-foreground transition-colors hover:text-foreground block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+            Testimonials
+          </Link>
+        </>
+      )}
+    </>
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
         <Logo />
         
-        <nav className="flex items-center gap-2"> {/* Main navigation container for right side items */}
-          
+        <nav className="flex items-center gap-2">
           {/* Desktop-only navigation links */}
           <div className="hidden md:flex items-center gap-4 text-sm lg:gap-6">
             {user ? (
@@ -34,78 +62,70 @@ export async function Navbar() {
                 Get Started
               </Link>
             )}
-            
-            <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground">
-              Features
-            </Link>
-
-            {!user && (
-              <>
-                <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground">
-                  Pricing
-                </Link>
-                <Link href="/#testimonials" className="text-muted-foreground transition-colors hover:text-foreground">
-                  Testimonials
-                </Link>
-              </>
-            )}
+            {commonLinks}
           </div>
 
           {/* UserNav (if logged in) or Login button (if logged out, for desktop) */}
-          {/* UserNav component handles its own display and is suitable for all screen sizes. */}
-          {/* The explicit Login button here is primarily for desktop when not logged in. */}
-          {user ? (
+          {isLoading ? (
+             <div className="h-8 w-20 rounded-md bg-muted animate-pulse hidden md:block" />
+          ) : user ? (
             <UserNav /> 
           ) : (
-            // This Login button is hidden on small screens, mobile login is via hamburger.
             <Link href="/login" className="hidden md:inline-flex"> 
               <Button variant="outline" size="sm">Login</Button>
             </Link>
           )}
           
           {/* Mobile Navigation Menu Trigger */}
-          <div className="md:hidden"> {/* Only show on mobile screens (hidden on md and up) */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+          <div className="md:hidden">
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open menu">
                   <Menu className="h-5 w-5" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                {user ? (
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem asChild>
-                    <Link href="/register">Get Started</Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem asChild>
-                  <Link href="/#features">Features</Link>
-                </DropdownMenuItem>
-                {!user && (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/#pricing">Pricing</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/#testimonials">Testimonials</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-                {/* If user is not logged in, provide a Login link in the mobile menu. */}
-                {/* UserNav (if logged in) handles its own settings/logout links. */}
-                {!user && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/login">Login</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[280px] p-0">
+                <SheetHeader className="p-4 border-b">
+                  <div className="flex justify-between items-center">
+                    <SheetTitle><Logo /></SheetTitle>
+                    <SheetClose asChild>
+                       <Button variant="ghost" size="icon">
+                         <X className="h-5 w-5" />
+                         <span className="sr-only">Close menu</span>
+                       </Button>
+                    </SheetClose>
+                  </div>
+                </SheetHeader>
+                <div className="p-4 space-y-2">
+                  {user ? (
+                     <Link href="/dashboard" className="font-medium text-primary block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+                       Dashboard
+                     </Link>
+                  ) : (
+                    <Link href="/register" className="font-medium text-primary block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+                      Get Started
+                    </Link>
+                  )}
+                  {commonLinks}
+                  <Separator className="my-4" />
+                  {user ? (
+                    // If user is logged in, UserNav component inside Sheet is complex.
+                    // Logout is handled by UserNav. For mobile, maybe a direct logout link or a profile link.
+                    // For simplicity, we'll rely on UserNav if they click the avatar, or add a simple logout.
+                    // <UserNav /> // This might be too much for a simple sheet.
+                    // Alternative:
+                     <Link href="/dashboard/settings" className="text-muted-foreground transition-colors hover:text-foreground block py-2" onClick={() => setIsMobileMenuOpen(false)}>
+                       Account Settings
+                     </Link>
+                    // And a logout button would call the handleLogout action.
+                  ) : (
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Login</Button>
+                    </Link>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </nav>
       </div>
