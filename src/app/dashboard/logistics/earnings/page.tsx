@@ -37,12 +37,12 @@ export default async function LogisticsEarningsPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">My Earnings</h1>
         <p className="text-muted-foreground">
-          Track your earnings, view payout history, and manage your wallet.
+          Track your earnings, view payout history, and manage your wallet. Platform fees are deducted based on your subscription plan.
         </p>
       </div>
        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Wallet Balance</CardTitle>
+            <CardTitle className="text-sm font-medium">Current Wallet Balance (Net)</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -59,14 +59,14 @@ export default async function LogisticsEarningsPage() {
         <CardHeader>
           <CardTitle>Earnings Overview</CardTitle>
           <CardDescription>
-            Summary of your earnings and payout status.
+            Summary of your gross earnings, platform fees deducted, and net payouts.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground rounded-lg border-2 border-dashed border-border">
             <TrendingUp className="w-16 h-16 mb-4 opacity-50" />
             <p className="text-lg font-medium">Detailed earnings breakdown is coming soon.</p>
-            <p className="text-sm">You will be able to see graphs, payout history, and manage withdrawal settings here.</p>
+            <p className="text-sm">You will be able to see graphs of your gross earnings, platform fees, net payouts, transaction history, and manage withdrawal settings here.</p>
           </div>
         </CardContent>
       </Card>

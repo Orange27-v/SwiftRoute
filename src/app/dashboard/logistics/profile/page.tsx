@@ -1,12 +1,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/auth";
-import { UserCircle, Banknote } from "lucide-react";
+import { UserCircle, Banknote, ShieldCheck } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { PLAN_CONFIG } from "@/config/plans";
+import type { PlanId } from "@/types";
 
 export default async function LogisticsProfilePage() {
   const user = await getCurrentUser(); 
@@ -16,11 +19,14 @@ export default async function LogisticsProfilePage() {
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
-    if (names.length > 1) {
+    if (names.length > 1 && names[0] && names[names.length - 1]) {
       return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
   };
+
+  const currentPlanId = user.current_plan || 'basic'; // Default to basic if no plan set
+  const currentPlanDetails = PLAN_CONFIG[currentPlanId as PlanId] || PLAN_CONFIG.basic;
 
 
   return (
@@ -28,7 +34,7 @@ export default async function LogisticsProfilePage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Company Profile</h1>
         <p className="text-muted-foreground">
-          Manage your company information, verification status, and payout details.
+          Manage your company information, verification status, subscription, and payout details.
         </p>
       </div>
       <Card>
@@ -64,17 +70,35 @@ export default async function LogisticsProfilePage() {
                   <Input id="email" type="email" defaultValue={user.email} readOnly />
                 </div>
               </div>
-               {/* Add more fields like phone, address, company registration documents upload etc. */}
               <Button disabled className="bg-accent hover:bg-accent/90 text-accent-foreground">Update Company Info (Coming Soon)</Button>
             </div>
           </div>
+
+          <Separator />
+          
+          <div>
+            <h3 className="text-lg font-medium mb-2 flex items-center"><ShieldCheck className="mr-2 h-5 w-5 text-primary" /> Subscription Management</h3>
+            <div className="p-4 border rounded-md bg-secondary/10">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">Current Plan</p>
+                  <p className="text-lg font-semibold">{currentPlanDetails.name}</p>
+                </div>
+                <Badge variant={currentPlanId === 'pro' ? 'default' : 'secondary'} className="self-start sm:self-center">
+                  {currentPlanDetails.priceMonthly !== undefined ? `$${currentPlanDetails.priceMonthly}/mo` : 'Custom'}
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Platform fee on deliveries: {currentPlanDetails.fee_percentage}%</p>
+              <Button variant="outline" size="sm" className="mt-3" disabled>Change Plan (Coming Soon)</Button>
+            </div>
+          </div>
+
 
           <Separator />
 
           <div>
             <h3 className="text-lg font-medium mb-2 flex items-center"><Banknote className="mr-2 h-5 w-5 text-primary" /> Payout Settings</h3>
             <p className="text-sm text-muted-foreground mb-4">Manage your bank account details for receiving payouts. This information is securely stored.</p>
-            {/* Payout details form would go here - Bank name, account number, account name */}
             <div className="p-6 border border-dashed rounded-md text-center">
               <p className="text-muted-foreground">Payout settings management is under construction.</p>
               <p className="text-xs text-muted-foreground">You will be able to add and update your bank details here.</p>

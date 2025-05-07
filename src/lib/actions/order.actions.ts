@@ -1,8 +1,9 @@
 'use server';
 
-import type { DeliveryOrder, CreateDeliveryOrderInput, User, Wallet } from '@/types';
-import { getCurrentUser } from '@/lib/auth'; // Using mock auth
+import type { DeliveryOrder, CreateDeliveryOrderInput, User, Wallet, PlanId } from '@/types';
+import { getCurrentUser, mockUsersDb } from '@/lib/auth'; // Using mock auth
 import { revalidatePath } from 'next/cache';
+import { PLAN_CONFIG } from '@/config/plans';
 
 // Mock database for delivery orders
 let mockOrders: DeliveryOrder[] = [
@@ -28,6 +29,7 @@ let mockOrders: DeliveryOrder[] = [
     business_name: 'Acme Corp',
     logistics_id: 'user_logistics_456', // Specific ID
     logistics_name: 'Speedy Deliveries',
+    logistics_current_plan_at_acceptance: 'pro',
     pickup_address: '789 Pine Ln, Anytown, USA',
     dropoff_address: '101 Maple Rd, Otherville, USA',
     item_description: 'Important documents',
@@ -38,7 +40,7 @@ let mockOrders: DeliveryOrder[] = [
   },
   {
     id: 'order_3',
-    business_id: 'another_business_789', // A different business (not in mockUsers for now, will appear as "Unknown Business")
+    business_id: 'another_business_789', 
     business_name: 'Beta Innovations',
     pickup_address: '222 Innovation Dr, Tech City, USA',
     dropoff_address: '333 Enterprise Ave, Metroburg, USA',
@@ -53,15 +55,13 @@ let mockOrders: DeliveryOrder[] = [
 // Mock data for wallets
 let mockWallets: Wallet[] = [
   {
-    id: 'wallet_user_logistics_456', // Corresponds to user_logistics_456
+    id: 'wallet_user_logistics_456', 
     user_id: 'user_logistics_456',
-    balance: 1500000, // e.g. 15,000 NGN in kobo
+    balance: 1500000, 
     currency: 'NGN',
     created_at: new Date('2023-01-15T12:00:00Z'),
     updated_at: new Date('2024-07-27T10:00:00Z'),
   }
-  // Wallets for other logistics users (e.g., unverified) can be added if needed
-  // or created on-the-fly by getLogisticsWallet if not found.
 ];
 
 
@@ -142,6 +142,14 @@ export async function acceptDeliveryOrder(
   order.logistics_name = logisticsUser.name;
   order.status = 'pending_payment'; 
   order.updated_at = new Date();
+  // Store the logistics company's current plan at the time of accepting the order
+  // This is important for calculating the correct platform fee later.
+  if (logisticsUser.current_plan) {
+    order.logistics_current_plan_at_acceptance = logisticsUser.current_plan;
+  } else {
+     // Default to basic if for some reason the user has no plan (shouldn't happen in a real scenario)
+    order.logistics_current_plan_at_acceptance = 'basic';
+  }
   mockOrders[orderIndex] = order;
 
   revalidatePath('/dashboard/logistics');
@@ -174,23 +182,47 @@ export async function updateOrderStatus(
   } 
   else if (newStatus === 'confirmed_by_business' && user.role === 'business' && order.business_id === user.id && order.status === 'delivered') {
     canUpdate = true;
-    // TODO: Trigger payment release from escrow to logistics wallet
     const logisticsWallet = await getLogisticsWallet(order.logistics_id);
-    if (logisticsWallet && order.logistics_id) {
-        logisticsWallet.balance += order.price;
+    
+    if (logisticsWallet && order.logistics_id && order.logistics_current_plan_at_acceptance) {
+        const planId = order.logistics_current_plan_at_acceptance;
+        // Use the plan details from PLAN_CONFIG. Fallback to basic if plan somehow doesn't exist (defensive)
+        const planDetails = PLAN_CONFIG[planId] || PLAN_CONFIG.basic;
+        const platformFeePercentage = planDetails.fee_percentage;
+        
+        const platformFee = Math.round(order.price * (platformFeePercentage / 100));
+        const amountToLogistics = order.price - platformFee;
+        
+        logisticsWallet.balance += amountToLogistics;
+        logisticsWallet.updated_at = new Date();
+        
+        const walletIndex = mockWallets.findIndex(w => w.user_id === order.logistics_id);
+        if(walletIndex !== -1) {
+          mockWallets[walletIndex] = logisticsWallet;
+        } else {
+          mockWallets.push(logisticsWallet); 
+        }
+        console.log(`Order ${order.id}: Business confirmed. Price: ${order.price}. Logistics Plan: ${planId}. Fee %: ${platformFeePercentage}. Platform Fee: ${platformFee}. Amount to Logistics: ${amountToLogistics}.`);
+    } else if (logisticsWallet && order.logistics_id) {
+        console.warn(`Order ${order.id}: Logistics plan at acceptance missing. Releasing full amount for now, or apply default high fee.`);
+        // For now, release full amount as a fallback. In production, this might be an error or apply a default (higher) fee.
+        logisticsWallet.balance += order.price; 
         logisticsWallet.updated_at = new Date();
         const walletIndex = mockWallets.findIndex(w => w.user_id === order.logistics_id);
         if(walletIndex !== -1) mockWallets[walletIndex] = logisticsWallet; else mockWallets.push(logisticsWallet);
     }
+
   } else if (newStatus === 'cancelled_by_business' && user.role === 'business' && order.business_id === user.id && (order.status === 'pending_acceptance' || order.status === 'pending_payment')) {
     canUpdate = true;
-    order.logistics_id = null; // Clear logistics if any
+    order.logistics_id = null; 
     order.logistics_name = null;
-  } else if (newStatus === 'cancelled_by_logistics' && user.role === 'logistics' && order.logistics_id === user.id && order.status === 'pending_payment') { // Or other appropriate statuses
+    order.logistics_current_plan_at_acceptance = null;
+  } else if (newStatus === 'cancelled_by_logistics' && user.role === 'logistics' && order.logistics_id === user.id && order.status === 'pending_payment') { 
     canUpdate = true;
-    order.status = 'pending_acceptance'; // Revert to pending acceptance so others can pick it
+    order.status = 'pending_acceptance'; 
     order.logistics_id = null;
     order.logistics_name = null;
+    order.logistics_current_plan_at_acceptance = null;
     order.updated_at = new Date();
     mockOrders[orderIndex] = order;
     revalidatePath('/dashboard/business/orders');
@@ -198,11 +230,14 @@ export async function updateOrderStatus(
     revalidatePath('/dashboard/logistics/my-deliveries');
     return { success: true, message: `Order cancelled by logistics and returned to pool.`, order };
   }
-  // TODO: Add 'pending_payment' transition logic if a payment action is added (e.g., paystack integration)
-  // Typically from business side after 'pending_payment' status
-  // if (newStatus === 'in_escrow' && user.role === 'business' && order.business_id === user.id && order.status === 'pending_payment') {
-  //    canUpdate = true;
-  // }
+  // Mock transition to 'in_escrow' - In a real app, this would be triggered by Paystack webhook after successful payment
+  // For now, we allow business to manually trigger this if they are the one who should pay.
+  else if (newStatus === 'in_escrow' && user.role === 'business' && order.business_id === user.id && order.status === 'pending_payment') {
+     canUpdate = true;
+     // Here you would ideally verify payment with Paystack if it was a real payment flow
+     console.log(`Order ${order.id} manually moved to 'in_escrow' by business (mock payment).`);
+  }
+
 
   if (!canUpdate) {
     return { success: false, message: `Cannot update order to ${newStatus} from ${order.status} with your role.`};
@@ -222,8 +257,8 @@ export async function updateOrderStatus(
 
 
 export async function getLogisticsWallet(userIdFromOrder?: string | null): Promise<Wallet | null> {
-  const logisticsUser = await getCurrentUser();
-  const targetUserId = userIdFromOrder || (logisticsUser?.role === 'logistics' ? logisticsUser.id : null);
+  const currentLoggedInUser = await getCurrentUser();
+  const targetUserId = userIdFromOrder || (currentLoggedInUser?.role === 'logistics' ? currentLoggedInUser.id : null);
 
   if (!targetUserId) {
     return null;
@@ -231,17 +266,18 @@ export async function getLogisticsWallet(userIdFromOrder?: string | null): Promi
 
   let wallet = mockWallets.find(wallet => wallet.user_id === targetUserId);
   
-  // If wallet doesn't exist for a logistics user, create one (for mock purposes)
-  if (!wallet && (logisticsUser?.id === targetUserId && logisticsUser?.role === 'logistics')) {
+  const targetUserDetails = mockUsersDb[targetUserId]; 
+  if (!wallet && targetUserDetails && targetUserDetails.role === 'logistics') {
     const newWallet: Wallet = {
       id: `wallet_${targetUserId}`,
       user_id: targetUserId,
       balance: 0,
-      currency: 'NGN',
+      currency: 'NGN', 
       created_at: new Date(),
       updated_at: new Date(),
     };
     mockWallets.push(newWallet);
+    console.log(`Created new wallet for logistics user ${targetUserId}`);
     return newWallet;
   }
   

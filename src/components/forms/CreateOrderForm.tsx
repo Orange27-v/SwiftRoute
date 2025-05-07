@@ -34,7 +34,6 @@ const formSchema = z.object({
   price: z.coerce.number().positive({
     message: 'Price must be a positive number.',
   }),
-  // Optional: Add fields for pickup_lat, pickup_lng, dropoff_lat, dropoff_lng if using map input
 });
 
 type CreateOrderFormValues = z.infer<typeof formSchema>;
@@ -55,18 +54,8 @@ export function CreateOrderForm() {
   const {isSubmitting} = form.formState;
 
   async function onSubmit(values: CreateOrderFormValues) {
-    // Here, you would ideally use getAddressDetails from src/services/google-maps.ts
-    // to convert addresses to lat/lng if your backend requires it.
-    // For this example, we'll pass addresses directly.
-    // const pickupDetails = await getAddressDetails(values.pickup_address);
-    // const dropoffDetails = await getAddressDetails(values.dropoff_address);
-
     const orderInput: CreateDeliveryOrderInput = {
       ...values,
-      // pickup_lat: pickupDetails.lat,
-      // pickup_lng: pickupDetails.lng,
-      // dropoff_lat: dropoffDetails.lat,
-      // dropoff_lng: dropoffDetails.lng,
     };
     
     try {
@@ -78,7 +67,7 @@ export function CreateOrderForm() {
           variant: 'default',
         });
         form.reset();
-        router.push('/dashboard/business/orders'); // Redirect to orders page or order detail
+        router.push('/dashboard/business/orders'); 
       } else {
         toast({
           title: 'Error Creating Order',
@@ -110,7 +99,6 @@ export function CreateOrderForm() {
               </FormControl>
               <FormDescription>
                 Enter the full address for package pickup.
-                {/* TODO: Integrate Google Maps Autocomplete here */}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -127,7 +115,6 @@ export function CreateOrderForm() {
               </FormControl>
               <FormDescription>
                 Enter the full address for package delivery.
-                {/* TODO: Integrate Google Maps Autocomplete here */}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -163,7 +150,7 @@ export function CreateOrderForm() {
                 <Input type="number" placeholder="50.00" {...field} step="0.01" />
               </FormControl>
               <FormDescription>
-                Enter the amount you are offering for this delivery. This will be held in escrow.
+                Enter the total amount the logistics provider will receive for this delivery. This will be held in escrow.
               </FormDescription>
               <FormMessage />
             </FormItem>

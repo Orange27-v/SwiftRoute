@@ -20,7 +20,7 @@ export default async function CreateOrderPage() {
       <Card className="shadow">
         <CardHeader>
           <CardTitle>Order Details</CardTitle>
-          <CardDescription>Provide pickup, dropoff, item information, and your offered price.</CardDescription>
+          <CardDescription>Provide pickup, dropoff, item information, and your offered price. This price is the total amount the logistics provider will receive (platform fees are handled separately with the provider).</CardDescription>
         </CardHeader>
         <CardContent>
           <CreateOrderForm />

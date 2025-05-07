@@ -14,21 +14,21 @@ export default async function BusinessPaymentsPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Payment History</h1>
         <p className="text-muted-foreground">
-          View your transaction history and manage payment methods.
+          View your transaction history for delivery services.
         </p>
       </div>
       <Card>
         <CardHeader>
           <CardTitle>Transactions</CardTitle>
           <CardDescription>
-            A list of all your payments made through SwiftRoute.
+            A list of all your payments made for delivery services through SwiftRoute&apos;s escrow system.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground rounded-lg border-2 border-dashed border-border">
             <CreditCard className="w-16 h-16 mb-4 opacity-50" />
             <p className="text-lg font-medium">Payment history feature is coming soon.</p>
-            <p className="text-sm">You will be able to see all your transactions and their statuses here.</p>
+            <p className="text-sm">You will be able to see all your escrow payments and their statuses here.</p>
           </div>
         </CardContent>
       </Card>

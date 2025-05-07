@@ -1,5 +1,7 @@
 export type UserRole = 'business' | 'logistics' | 'admin';
 
+export type PlanId = 'basic' | 'pro' | 'enterprise';
+
 export interface User {
   id: string;
   name: string;
@@ -8,7 +10,7 @@ export interface User {
   role: UserRole;
   is_verified: boolean;
   created_at: Date;
-  // Potentially add walletId if users can have general wallets
+  current_plan?: PlanId; // For logistics users, refers to their subscription plan
 }
 
 export type DeliveryOrderStatus = 
@@ -27,6 +29,7 @@ export interface DeliveryOrder {
   business_name?: string; // For display
   logistics_id?: string | null;
   logistics_name?: string | null; // For display
+  logistics_current_plan_at_acceptance?: PlanId | null; // Store the plan of logistics co. at time of acceptance
   pickup_address: string;
   pickup_lat?: number | null;
   pickup_lng?: number | null;
@@ -34,7 +37,7 @@ export interface DeliveryOrder {
   dropoff_lat?: number | null;
   dropoff_lng?: number | null;
   item_description: string;
-  price: number; // in smallest currency unit (e.g., kobo, cents)
+  price: number; // in smallest currency unit (e.g., kobo, cents) - This is what the business pays.
   status: DeliveryOrderStatus;
   created_at: Date;
   updated_at: Date;
@@ -70,6 +73,6 @@ export interface Wallet {
 }
 
 // For forms, typically subset of main types
-export type CreateDeliveryOrderInput = Omit<DeliveryOrder, 'id' | 'business_id' | 'business_name' | 'logistics_id' | 'logistics_name' | 'status' | 'created_at' | 'updated_at'> & {
+export type CreateDeliveryOrderInput = Omit<DeliveryOrder, 'id' | 'business_id' | 'business_name' | 'logistics_id' | 'logistics_name' | 'logistics_current_plan_at_acceptance' | 'status' | 'created_at' | 'updated_at'> & {
   // Any specific form fields if different
 };
