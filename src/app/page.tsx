@@ -24,7 +24,7 @@ export default function HomePage() {
                     Connect with verified logistics partners and manage your deliveries with confidence. Our escrow payment system ensures peace of mind for every transaction.
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <div className="flex flex-col gap-2 min-[300px]:flex-row">
                   <Link href="/register?type=business">
                     <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                       Ship as a Business
@@ -40,15 +40,15 @@ export default function HomePage() {
               </div>
               {/* Image's grid item wrapper */}
               <div className="lg:order-last w-full"> 
-                <div className="relative aspect-[3/2] overflow-hidden rounded-xl shadow-lg">
+                <div className="relative aspect-[3/2] overflow-hidden rounded-xl shadow-sm">
                   <Image
                     src="https://picsum.photos/seed/logistics-hero/600/400"
                     alt="Logistics network illustration"
                     data-ai-hint="logistics network"
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     priority
-                    sizes="(max-width: 1023px) 90vw, (max-width: 1279px) 400px, 600px"
+                    sizes="(max-width: 1023px) 90vw, (max-width: 1279px) 400px, 400px"
                   />
                 </div>
               </div>
