@@ -44,22 +44,43 @@ const mockUsersDb: Record<string, User> = {
   },
 };
 
-// MOCKED_ACTIVE_USER_ID determines the currently "logged-in" user.
-// It defaults to null (logged out). Login/logout functions will modify this.
-let MOCKED_ACTIVE_USER_ID: string | null = null; 
+// Ensure the global variable is declared for TypeScript
+declare global {
+  // eslint-disable-next-line no-var
+  var __MOCKED_ACTIVE_USER_ID_SWIFTROUTE__: string | null | undefined;
+}
+
+// Initialize MOCKED_ACTIVE_USER_ID on globalThis if not already set
+// This helps persist the ID across HMR updates in development
+if (globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ === undefined) {
+  globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ = null;
+  console.log("src/lib/auth.ts: Initialized globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ to null");
+} else {
+  console.log("src/lib/auth.ts: globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ already exists with value:", globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__);
+}
 
 // Simulate getting the current user.
 export async function getCurrentUser(): Promise<User | null> {
-  if (!MOCKED_ACTIVE_USER_ID) {
+  const activeUserId = globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__;
+  console.log(`getCurrentUser called. globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__: ${activeUserId}`);
+  if (!activeUserId) {
+    console.log('getCurrentUser: No active user ID on globalThis, returning null.');
     return null;
   }
-  const user = mockUsersDb[MOCKED_ACTIVE_USER_ID];
-  // If MOCKED_ACTIVE_USER_ID is set but user not found (e.g., ID was stale/invalid), treat as logged out.
-  if (!user) {
-    MOCKED_ACTIVE_USER_ID = null; // Ensure logout state
+  const user = mockUsersDb[activeUserId];
+  if (!user && activeUserId) { 
+    console.warn(`getCurrentUser: User ID ${activeUserId} was set on globalThis but not found in mockUsersDb. Resetting active user.`);
+    globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ = null;
     return null;
   }
-  return user;
+  if (user) {
+    console.log(`getCurrentUser: Returning user ${user.name} for ID ${activeUserId}`);
+  } else {
+     // This case should ideally not be reached if activeUserId is null checked above,
+     // but as a safeguard if activeUserId is truthy but not in mockUsersDb.
+    console.log(`getCurrentUser: activeUserId ${activeUserId} is set, but no user found in mockUsersDb. Returning null.`);
+  }
+  return user || null;
 }
 
 // Mock function to check if user is authenticated
@@ -70,27 +91,35 @@ export async function isAuthenticated(): Promise<boolean> {
 
 // Mock login function
 export async function login(email: string, password: string):Promise<{success: boolean, user?: User, message?: string}> {
-  // Make email comparison case-insensitive
-  const userFound = Object.values(mockUsersDb).find(u => u.email.toLowerCase() === email.toLowerCase());
+  const normalizedEmail = email.toLowerCase();
+  const userFound = Object.values(mockUsersDb).find(u => u.email.toLowerCase() === normalizedEmail);
 
-  if (userFound && userFound.password === password) { // Check against stored password
-    MOCKED_ACTIVE_USER_ID = userFound.id; // Set the active user ID
-    console.log(`Mock login: User ${userFound.name} (${userFound.id}) is now active.`);
-    return { success: true, user: userFound };
+  if (userFound) {
+    if (userFound.password === password) {
+      globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ = userFound.id;
+      console.log(`Mock login: Success! User ${userFound.name} (ID: ${userFound.id}, Email: ${userFound.email}) is now active. globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ set to: ${globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__}`);
+      return { success: true, user: userFound };
+    } else {
+      console.log(`Mock login: Failed for email ${email}. User found, but password incorrect. Provided: '${password}', Expected: '${userFound.password}'. globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ remains: ${globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__}`);
+      return { success: false, message: 'Invalid password.' };
+    }
+  } else {
+    console.log(`Mock login: Failed for email ${email}. User not found. globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ remains: ${globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__}`);
+    return { success: false, message: 'User not found.' };
   }
-  console.log(`Mock login: Failed for email ${email}. User found: ${!!userFound}, Password provided: ${password}, Expected password: ${userFound?.password}, Password match: ${userFound ? userFound.password === password : 'N/A'}`);
-  return { success: false, message: 'Invalid credentials. Please check your email and password.' };
 }
 
 // Mock logout function
 export async function logout(): Promise<void> {
-  const currentUserId = MOCKED_ACTIVE_USER_ID;
-  MOCKED_ACTIVE_USER_ID = null; // Clear the active user ID
+  const currentUserId = globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__;
+  globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ = null;
   if (currentUserId) {
     const loggedOutUser = mockUsersDb[currentUserId];
-    console.log(`Mock logout: User ${loggedOutUser?.name || currentUserId} has been logged out.`);
+    console.log(`Mock logout: User ${loggedOutUser?.name || currentUserId} has been logged out. globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__ is now null.`);
   } else {
-    console.log('Mock logout: No active user to log out.');
+    console.log('Mock logout: No active user to log out on globalThis.');
   }
-  console.log('Mock logout: MOCKED_ACTIVE_USER_ID is now null.');
 }
+
+// Initial log to confirm module loading and current state of global variable
+console.log("src/lib/auth.ts module logic executed. Current globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__:", globalThis.__MOCKED_ACTIVE_USER_ID_SWIFTROUTE__);
