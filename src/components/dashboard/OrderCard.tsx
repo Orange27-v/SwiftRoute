@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { DeliveryOrder, UserRole } from '@/types';
@@ -28,14 +29,14 @@ interface OrderCardProps {
 }
 
 const statusColors: Record<DeliveryOrder['status'], string> = {
-  pending_acceptance: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  pending_payment: 'bg-blue-100 text-blue-800 border-blue-300',
-  in_escrow: 'bg-green-100 text-green-800 border-green-300',
-  delivered: 'bg-purple-100 text-purple-800 border-purple-300',
-  confirmed_by_business: 'bg-teal-100 text-teal-800 border-teal-300',
-  cancelled_by_business: 'bg-red-100 text-red-800 border-red-300',
-  cancelled_by_logistics: 'bg-red-100 text-red-800 border-red-300',
-  disputed: 'bg-orange-100 text-orange-800 border-orange-300',
+  pending_acceptance: 'bg-yellow-100 text-yellow-700 border border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-700/50',
+  pending_payment: 'bg-blue-100 text-blue-800 border border-blue-300 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700/50',
+  in_escrow: 'bg-green-100 text-green-800 border border-green-300 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700/50',
+  delivered: 'bg-purple-100 text-purple-800 border border-purple-300 dark:bg-purple-900/50 dark:text-purple-300 dark:border-purple-700/50',
+  confirmed_by_business: 'bg-teal-100 text-teal-800 border border-teal-300 dark:bg-teal-900/50 dark:text-teal-300 dark:border-teal-700/50',
+  cancelled_by_business: 'bg-red-100 text-red-800 border border-red-300 dark:bg-red-900/50 dark:text-red-300 dark:border-red-700/50',
+  cancelled_by_logistics: 'bg-red-100 text-red-800 border border-red-300 dark:bg-red-900/50 dark:text-red-300 dark:border-red-700/50',
+  disputed: 'bg-orange-100 text-orange-800 border border-orange-300 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-700/50',
 };
 
 const statusIcons: Record<DeliveryOrder['status'], React.ElementType> = {
@@ -109,7 +110,7 @@ export function OrderCard({ order, currentUserRole, onActionComplete }: OrderCar
   const StatusIcon = statusIcons[order.status] || AlertTriangle;
 
   return (
-    <Card className="w-full hover:shadow transition-shadow">
+    <Card className="w-full hover:shadow-md transition-shadow">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
@@ -248,3 +249,4 @@ export function OrderCard({ order, currentUserRole, onActionComplete }: OrderCar
     </Card>
   );
 }
+
