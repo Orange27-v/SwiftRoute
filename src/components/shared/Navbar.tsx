@@ -12,17 +12,21 @@ export async function Navbar() {
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
         <Logo />
         <nav className="flex items-center gap-4 text-sm lg:gap-6">
-          {user && (
+          {user ? (
             <Link href="/dashboard" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
               Dashboard
+            </Link>
+          ) : (
+             <Link href="/register" className="hidden md:block">
+                <Button variant="outline" size="sm">Get Started</Button>
             </Link>
           )}
           <Link href="/#features" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
             Features
           </Link>
-          <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
+          {/* <Link href="/#pricing" className="text-muted-foreground transition-colors hover:text-foreground hidden md:block">
             Pricing
-          </Link>
+          </Link> */}
           <UserNav />
         </nav>
       </div>
