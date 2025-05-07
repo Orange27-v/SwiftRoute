@@ -10,6 +10,14 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { PLAN_CONFIG } from "@/config/plans";
 import type { PlanId } from "@/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 export default async function LogisticsProfilePage() {
   const user = await getCurrentUser(); 
@@ -28,6 +36,7 @@ export default async function LogisticsProfilePage() {
   const currentPlanId = user.current_plan || 'basic'; // Default to basic if no plan set
   const currentPlanDetails = PLAN_CONFIG[currentPlanId as PlanId] || PLAN_CONFIG.basic;
 
+  const [selectedPlan, setSelectedPlan] = useState<PlanId>(currentPlanId as PlanId);
 
   return (
     <div className="space-y-6">
@@ -85,11 +94,27 @@ export default async function LogisticsProfilePage() {
                   <p className="text-lg font-semibold">{currentPlanDetails.name}</p>
                 </div>
                 <Badge variant={currentPlanId === 'pro' ? 'default' : 'secondary'} className="self-start sm:self-center">
-                  {currentPlanDetails.priceMonthly !== undefined ? `$${currentPlanDetails.priceMonthly}/mo` : 'Custom'}
+                  {currentPlanDetails.fee_percentage !== undefined ? `${currentPlanDetails.fee_percentage}% per delivery` : 'Custom'}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-1">Platform fee on deliveries: {currentPlanDetails.fee_percentage}%</p>
-              <Button variant="outline" size="sm" className="mt-3" disabled>Change Plan (Coming Soon)</Button>
+              
+              <div className="mt-3">
+                <Label htmlFor="plan">Select New Plan</Label>
+                <Select value={selectedPlan} onValueChange={(value) => setSelectedPlan(value as PlanId)}>
+                  <SelectTrigger id="plan">
+                    <SelectValue placeholder="Select a plan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="basic">Basic - 5% per delivery</SelectItem>
+                    <SelectItem value="pro">Pro - 3.5% per delivery</SelectItem>
+                    <SelectItem value="enterprise">Enterprise - Custom</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button variant="outline" size="sm" className="mt-3" disabled={selectedPlan === currentPlanId}>
+                {selectedPlan === currentPlanId ? 'Current Plan' : 'Change Plan (Coming Soon)'}
+              </Button>
             </div>
           </div>
 
@@ -128,3 +153,4 @@ export default async function LogisticsProfilePage() {
     </div>
   );
 }
+
